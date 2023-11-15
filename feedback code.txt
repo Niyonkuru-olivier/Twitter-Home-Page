@@ -1,0 +1,125 @@
+public class Feedback extends JFrame {
+    private JPanel mainPanel;
+    private JComboBox<String> genderComboBox;
+    private JTextField emailTextField;
+    private JTextField firstNameTextField;
+    private JTextField lastNameTextField;
+    private JTextArea commentTextArea;
+    private JButton submitButton;
+    private JTable dataTable;
+    private JButton displayResultButton;
+
+    public Feedback() {
+        setTitle("Feedback Form");
+        setSize(600, 400);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+nPanel.setLayout(new GridBagLayout());
+        mainPanel.setBackground(Color.LIGHT_GRAY);
+
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.insets = new Insets(5, 5, 5, 5);
+        constraints.anchor = GridBagConstraints.WEST;
+
+        // Gender ComboBox
+        genderComboBox = new JComboBox<>(new String[]{"Male", "Female"});
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        mainPanel.add(genderComboBox, constraints);
+
+        // Email TextField
+        emailTextField = new JTextField(20);
+        constraints.gridx = 1;
+        mainPanel.add(emailTextField, constraints);
+// First Name TextField
+        firstNameTextField = new JTextField(20);
+        constraints.gridy = 1;
+        mainPanel.add(firstNameTextField, constraints);
+
+        // Last Name TextField
+        lastNameTextField = new JTextField(20);
+        constraints.gridy = 2;
+        mainPanel.add(lastNameTextField, constraints);
+
+        // Comment TextArea
+        commentTextArea = new JTextArea(5, 20);
+        JScrollPane commentScrollPane = new JScrollPane(commentTextArea);
+        constraints.gridy = 3;
+        mainPanel.add(commentScrollPane, constraints);
+// Submit Button
+        submitButton = new JButton("Submit");
+        constraints.gridy = 4;
+        mainPanel.add(submitButton, constraints);
+
+        // Display Result Button
+        displayResultButton = new JButton("DISPLAY RESULT");
+        constraints.gridy = 5;
+        mainPanel.add(displayResultButton, constraints);
+
+        // Data Table
+        DefaultTableModel tableModel = new DefaultTableModel(new String[]{"Gender", "Email", "First Name", "Last Name", "Comment"}, 0);
+        dataTable = new JTable(tableModel);
+        JScrollPane tableScrollPane = new JScrollPane(dataTable);
+        constraints.gridy = 6;
+        constraints.gridwidth = 2;
+        mainPanel.add(tableScrollPane, constraints);
+add(mainPanel);
+
+        // Submit Button Action Listener
+        submitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (validateForm()) {
+                    String gender = (String) genderComboBox.getSelectedItem();
+                    String email = emailTextField.getText();
+                    String firstName = firstNameTextField.getText();
+                    String lastName = lastNameTextField.getText();
+                    String comment = commentTextArea.getText();
+
+                    tableModel.addRow(new Object[]{gender, email, firstName, lastName, comment});
+                    clearForm();
+                } else {
+                    JOptionPane.showMessageDialog(mainPanel, "Please fill out the form correctly.");
+                }
+ }
+        });
+
+        // Display Result Button Action Listener
+        displayResultButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Navigate to ResultPage with the data
+                ResultPage resultPage = new ResultPage(tableModel.getDataVector(), tableModel.getColumnIdentifiers());
+                resultPage.setVisible(true);
+            }
+        });
+    }
+
+    private boolean validateForm() {
+        String email = emailTextField.getText();
+        String comment = commentTextArea.getText();
+if (email.isEmpty() || comment.length() < 50 || comment.length() > 100) {
+            return false;
+        }
+
+        // Check if the email contains a valid domain
+        Pattern pattern = Pattern.compile(".*@(gmail.com|yahoo.com|hotmail.com)$");
+        return pattern.matcher(email).matches();
+    }
+
+    private void clearForm() {
+        genderComboBox.setSelectedIndex(0);
+        emailTextField.setText("");
+        firstNameTextField.setText("");
+        lastNameTextField.setText("");
+        commentTextArea.setText("");
+    }
+public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                Feedback feedbackForm = new Feedback();
+                feedbackForm.setVisible(true);
+            }
+        });
+    }
+}
